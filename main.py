@@ -1,16 +1,20 @@
-import sys
+import sys, os
 from db import DatabaseManager
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,QHBoxLayout,
  QPushButton)
+from PyQt6.QtGui import  QIcon
 from tasks_view import TasksView
 from pomodoro_view import PomodoroView
-from analytics_view import AnalyticsView
+#from analytics_view import AnalyticsView
+from resource_path import resource_path
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         
         self.setWindowTitle("Tivitapp")
+        self.setWindowIcon(QIcon(resource_path("assets/logo.ico")))
         #Main widget and layout
         
         self._main_layout : QVBoxLayout = QVBoxLayout()
@@ -33,7 +37,7 @@ class MainWindow(QMainWindow):
         
         self._tasks_view = TasksView(self._database)
         self._pomodoro_view = PomodoroView(self._database)
-        self._analytics_view = AnalyticsView(self._database)
+        #self._analytics_view = AnalyticsView(self._database)
 
         self._pomodoro_view.setHidden(True)
         
@@ -76,7 +80,7 @@ class MainWindow(QMainWindow):
 
         self._analytics_view_button : QPushButton = QPushButton("Analytics")
         self._analytics_view_button.setObjectName("inactive_tab")
-        self._analytics_view_button.pressed.connect(lambda: self.show_tab(self._analytics_view, self._analytics_view_button))
+        #self._analytics_view_button.pressed.connect(lambda: self.show_tab(self._analytics_view, self._analytics_view_button))
 
         self._files_view_button : QPushButton = QPushButton("Files")
         self._files_view_button.setObjectName("inactive_tab")
@@ -157,8 +161,6 @@ class MainWindow(QMainWindow):
                 margin-top: 0px; 
             }
         """)
-
-
 
 
 
