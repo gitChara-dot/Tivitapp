@@ -4,7 +4,7 @@ class AnalyticsView(QWidget):
     def __init__(self, database : DatabaseManager):
         super().__init__()
 
-        self._main_layout : QGridLayout = QGridLayout
+        self._main_layout : QGridLayout = QGridLayout()
         self.setLayout(self._main_layout)
 
         self._database : DatabaseManager = database
