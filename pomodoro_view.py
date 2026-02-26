@@ -418,9 +418,8 @@ class PomodoroView(QWidget):
                 self.stop_internal_timer()
         else:
             id = item.property("id")
-            print(id)
             self._database.delete_timer(id)
-            print("borrado")
+           
 
         self.current_layout.removeWidget(item)
         item.deleteLater()
