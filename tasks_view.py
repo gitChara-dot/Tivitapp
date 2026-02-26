@@ -6,7 +6,7 @@ QLabel,QLineEdit, QPushButton, QDateEdit, QScrollArea, QCheckBox, QComboBox, QFi
 from PyQt6.QtGui import QIcon, QPixmap
 from PyQt6.QtCore import QDate, Qt
 from task_pdf_generator import TaskPDFGenerator
-
+from resource_path import resource_path
 
 class TasksView(QWidget):
     def __init__(self, _database: DatabaseManager):
@@ -16,7 +16,8 @@ class TasksView(QWidget):
         self.setLayout(self._main_layout)
 
         self._tasks : dict[int, tuple[str,QWidget]] = {} # Save id and a tuple with name and widget of the task
-        self._tasks_details : dict[int, list] = {} # Access tasks details list using ID. List order is: Task name, deadline, priority, state.
+        self._tasks_details : dict[int, list] = {} # Access tasks details list using ID. 
+                                                   #List order is: Task name, deadline, priority, state
         self._tasks_rows: dict[int, int] = {} # Get the row position with the id. 
  
 
@@ -172,6 +173,7 @@ class TasksView(QWidget):
 
         #Priority label
         task_priority : QLabel = QLabel()
+        task_priority.setPixmap(QPixmap(resource_path(f"assets/{chosen_priority}.png")))
         task_priority.setObjectName("task_priority")
         task_priority.setScaledContents(True) 
         task_priority.setFixedSize(45,45)
@@ -368,7 +370,7 @@ class TasksView(QWidget):
             widget_to_edit = stacked_widget.currentWidget()
             #In case of the priority label, we change it's pixmap instead. If its the date, we get the plain text
             if(position == 3):
-                widget_to_edit.setPixmap(QPixmap(f"assets/{new_text}.png"))
+                widget_to_edit.setPixmap(QPixmap(resource_path(f"assets/{new_text}.png")))
             else:
                 if(new_text):
                     widget_to_edit.setText(new_text)
@@ -459,7 +461,7 @@ class TasksView(QWidget):
                     if is_completed:
                         
                         if col == 3: # Change the priority image 
-                            label_widget.setPixmap(QPixmap("assets/Completed.png"))
+                            label_widget.setPixmap(QPixmap(resource_path("assets/Completed.png")))
                         else: # Texts only
    
                             label_widget.setText(f"<s>{clean_text}</s>")
@@ -468,7 +470,7 @@ class TasksView(QWidget):
                         
                         if col == 3: # Restore the priority image
                             priority_val = self._tasks_details[taskid][2]
-                            label_widget.setPixmap(QPixmap(f"assets/{priority_val}.png"))
+                            label_widget.setPixmap(QPixmap(resource_path(f"assets/{priority_val}.png")))
                         else: #Set the text to black 
                             label_widget.setText(clean_text)
                             label_widget.setStyleSheet("color: black; font-weight: normal;")
@@ -496,7 +498,7 @@ class TasksView(QWidget):
                 
 
                 message = QMessageBox()
-                message.setWindowIcon(QIcon("assets/sign_green.png"))
+                message.setWindowIcon(QIcon(resource_path("assets/sign_green.png")))
                 message.setWindowTitle("Success!")
                 message.setText("File saved succesfully at "+directory)
                 message.exec()
