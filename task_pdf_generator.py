@@ -1,13 +1,13 @@
 import os
 from fpdf import FPDF, XPos, YPos
 from fpdf.fonts import FontFace
-
+from resource_path import resource_path
 class TaskPDFGenerator(FPDF):
     def __init__(self):
         super().__init__(orientation="P", unit="mm", format="a4")
         self.set_auto_page_break(auto=True, margin=20)
         # Set standard margins (15mm)
-        self.set_margins(left=15, top=45, right=15) 
+        self.set_margins(left=1, top=45, right=1) 
         self.add_page()
 
     def header(self):
@@ -52,7 +52,7 @@ class TaskPDFGenerator(FPDF):
         self.cell(0, 10, f'Tivitapp Productivity - Page {self.page_no()}', align='C')
 
     def _get_priority_icon(self, priority_text):
-        path = "assets/"+priority_text+".png"
+        path = resource_path(f"assets/{priority_text}.png")
         return path if os.path.exists(path) else None
 
     def create_table(self, tasklist: dict):
@@ -61,14 +61,14 @@ class TaskPDFGenerator(FPDF):
         gray_row = FontFace(fill_color=(240, 240, 240))
         white_row = FontFace(fill_color=(255, 255, 255))
 
+
         self.set_font('Helvetica', '', 11)
 
         # --- Table Setup ---
         # Adjusted col_widths to sum roughly to 100% of usable width
-        # Ratios: ID(8), Task(42), Deadline(20), Priority(15), State(15)
         with self.table(
             borders_layout="NONE", 
-            col_widths=(8, 42, 20, 15, 5, 10), 
+            col_widths=(5, 42, 20, 15, 5, 13), 
             width=self.epw, # Force table to use full Effective Page Width
             text_align=("C", "C", "C", "C", "L", "L"),
             line_height=1.5 * self.font_size
@@ -85,6 +85,7 @@ class TaskPDFGenerator(FPDF):
 
             # --- Body Rows ---
             i = 1
+            
             for taskid in tasklist:
                 row = table.row()
                 taskdetails = tasklist[taskid] 
@@ -101,11 +102,18 @@ class TaskPDFGenerator(FPDF):
                 priority_text = str(taskdetails[2])
                 icon_path = self._get_priority_icon(priority_text)
                 row.cell(priority_text, style=current_style)
+
                 if icon_path:
                     row.cell(img=icon_path, img_fill_width=True, style=current_style)
                 
-                    
-
-                row.cell(str(taskdetails[3]), style=current_style)
+                state_text = taskdetails[3]
+                if state_text == "Completed":
+                    green_style = FontFace(
+                        color=(0, 160, 0),
+                        fill_color=current_style.fill_color
+                    )
+                    row.cell(state_text, style=green_style)
+                else:
+                    row.cell(state_text, style=current_style)
                 
                 i += 1
